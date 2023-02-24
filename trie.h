@@ -13,9 +13,9 @@
 #endif
 */
 
-#ifndef TRIE_IMPL_ASSERT
+#ifndef MARTY_ADT_TRIE_IMPL_ASSERT
     #ifdef CLIASSERT
-        #define TRIE_IMPL_ASSERT(expr)    CLIASSERT(expr)
+        #define MARTY_ADT_TRIE_IMPL_ASSERT(expr)    CLIASSERT(expr)
     #endif
 #endif
 
@@ -37,14 +37,14 @@
 #endif
 
 
-#ifndef TRIE_IMPL_ASSERT
+#ifndef MARTY_ADT_TRIE_IMPL_ASSERT
     #ifdef BOOST_ASSERT
-        #define TRIE_IMPL_ASSERT(expr)    BOOST_ASSERT(expr)
+        #define MARTY_ADT_TRIE_IMPL_ASSERT(expr)    BOOST_ASSERT(expr)
     #endif
 #endif
 
-#ifndef TRIE_IMPL_ASSERT
-    #define TRIE_IMPL_ASSERT(expr)    assert(expr)
+#ifndef MARTY_ADT_TRIE_IMPL_ASSERT
+    #define MARTY_ADT_TRIE_IMPL_ASSERT(expr)    assert(expr)
 #endif
 
 
@@ -148,6 +148,7 @@ class trie
 
 public:
 
+    // Type Declarations 
 
     typedef KeyType       key_type;
     typedef ValueType     mapped_type;
@@ -208,36 +209,6 @@ public:
     //typedef std::stack< trie_node_index, std::vector<trie_node_index> > trie_node_free_index_holder;
     typedef std::vector< value_index     >     value_free_index_holder;
     typedef std::vector< trie_node_index > trie_node_free_index_holder;
-
-
-    value_index add_value_impl( const mapped_type &v)
-    {
-        if (value_free_indexes.empty())
-           {
-            value_index res = values.size();
-            values.push_back(v);
-            return res;
-           }
-        value_index res = value_free_indexes.back();
-        TRIE_IMPL_ASSERT( res<values.size() && "value index out of range" );
-        value_free_indexes.pop_back();
-        values[res] = v;
-        return res;
-    }
-
-    void remove_value_impl( value_index i)
-    {
-        TRIE_IMPL_ASSERT( i<values.size() && "value index out of range" );
-        if (i==(values.size()-1))
-           { // last value
-            values.erase( values.begin()+i );
-           }
-        else
-           {
-            values[i] = mapped_type(); // set to default value
-            value_free_indexes.push_back(i);
-           }
-    }
 
 
 
@@ -320,12 +291,12 @@ public:
         trie_node_data_item& get_data_item( trie_type *pt, trie_node_data_item_index idx )
            {
             #if defined(USE_MARTY_ADT_TRIE_SINGLE_DATA_ARRAY)
-            TRIE_IMPL_ASSERT( idx<size && "node data index (idx) out of range" );
+            MARTY_ADT_TRIE_IMPL_ASSERT( idx<size && "node data index (idx) out of range" );
             idx += first_item;
-            TRIE_IMPL_ASSERT( idx<trie_node_data_items.size() && "node data index (first_item) out of range" );
+            MARTY_ADT_TRIE_IMPL_ASSERT( idx<trie_node_data_items.size() && "node data index (first_item) out of range" );
             return pt->trie_node_data_items[idx];
             #else
-            TRIE_IMPL_ASSERT( idx<data_items.size() && "node data index (idx) out of range" );
+            MARTY_ADT_TRIE_IMPL_ASSERT( idx<data_items.size() && "node data index (idx) out of range" );
             return data_items[idx];
             #endif
            }
@@ -338,8 +309,8 @@ public:
         typename trie_node_data_item_holder::iterator find_key_impl( trie_type *pt, const key_type &k, bool &bFound /* else return insert pos */ )
            {
             #if defined(USE_MARTY_ADT_TRIE_SINGLE_DATA_ARRAY)
-            TRIE_IMPL_ASSERT( (first_item)<pt->trie_node_data_items.size() && "node data index (first_item) out of range" );
-            TRIE_IMPL_ASSERT( (first_item+size)<pt->trie_node_data_items.size() && "node data index (size) out of range" );
+            MARTY_ADT_TRIE_IMPL_ASSERT( (first_item)<pt->trie_node_data_items.size() && "node data index (first_item) out of range" );
+            MARTY_ADT_TRIE_IMPL_ASSERT( (first_item+size)<pt->trie_node_data_items.size() && "node data index (size) out of range" );
 
             typename trie_node_data_item_holder::iterator rangeBegin
                      = pt->trie_node_data_items.begin() + first_item;
@@ -354,7 +325,7 @@ public:
                                      );
             if (foundIt!=rangeEnd)
                {
-                TRIE_IMPL_ASSERT(!(pt->comparator(k,foundIt->key) && pt->comparator(foundIt->key,k)) && "invalid order relation");
+                MARTY_ADT_TRIE_IMPL_ASSERT(!(pt->comparator(k,foundIt->key) && pt->comparator(foundIt->key,k)) && "invalid order relation");
                 if (pt->comparator(k,foundIt->key) == pt->comparator(foundIt->key,k))
                     bFound = true;
                }
@@ -368,7 +339,7 @@ public:
                                      );
             if (foundIt!=data_items.end())
                {
-                TRIE_IMPL_ASSERT(!(pt->comparator(k,foundIt->key) && pt->comparator(foundIt->key,k)) && "invalid order relation");
+                MARTY_ADT_TRIE_IMPL_ASSERT(!(pt->comparator(k,foundIt->key) && pt->comparator(foundIt->key,k)) && "invalid order relation");
                 if (pt->comparator(k,foundIt->key) == pt->comparator(foundIt->key,k))
                     bFound = true;
                }
@@ -403,8 +374,8 @@ public:
                }
 
             #if 0
-            TRIE_IMPL_ASSERT( (first_item)<pt->trie_node_data_items.size() && "node data index (first_item) out of range" );
-            TRIE_IMPL_ASSERT( (first_item+size)<pt->trie_node_data_items.size() && "node data index (size) out of range" );
+            MARTY_ADT_TRIE_IMPL_ASSERT( (first_item)<pt->trie_node_data_items.size() && "node data index (first_item) out of range" );
+            MARTY_ADT_TRIE_IMPL_ASSERT( (first_item+size)<pt->trie_node_data_items.size() && "node data index (size) out of range" );
 
             typename trie_node_data_item_holder::const_iterator rangeBegin
                      = pt->trie_node_data_items.begin() + first_item;
@@ -417,7 +388,7 @@ public:
                                      );
             if (foundIt!=rangeEnd)
                {
-                TRIE_IMPL_ASSERT(!(pt->comparator(k,foundIt->key) && pt->comparator(foundIt->key,k)) && "invalid order relation");
+                MARTY_ADT_TRIE_IMPL_ASSERT(!(pt->comparator(k,foundIt->key) && pt->comparator(foundIt->key,k)) && "invalid order relation");
                 if (pt->comparator(k,foundIt->key) == pt->comparator(foundIt->key,k))
                    return (trie_node_data_item_index)(foundIt - rangeBegin);
                }
@@ -431,7 +402,7 @@ public:
             #if defined(USE_MARTY_ADT_TRIE_SINGLE_DATA_ARRAY)
             return (trie_node_data_item_index)(it - pt->trie_node_data_items.begin());
             #else
-            TRIE_IMPL_ASSERT(0 && "nodeDataIteratorToGlobalIndex not implemented");
+            MARTY_ADT_TRIE_IMPL_ASSERT(0 && "nodeDataIteratorToGlobalIndex not implemented");
             #endif
            }
 
@@ -449,7 +420,7 @@ public:
             #if defined(USE_MARTY_ADT_TRIE_SINGLE_DATA_ARRAY)
             return (trie_node_data_item_index)(it - pt->trie_node_data_items.begin());
             #else
-            TRIE_IMPL_ASSERT(0 && "nodeDataIteratorToGlobalIndex not implemented");
+            MARTY_ADT_TRIE_IMPL_ASSERT(0 && "nodeDataIteratorToGlobalIndex not implemented");
             #endif
            }
 
@@ -530,14 +501,14 @@ public:
         void remove_item_value( trie_type *pt, trie_node_data_item_index itemIdx )
            {
             #if defined(USE_MARTY_ADT_TRIE_SINGLE_DATA_ARRAY)
-            TRIE_IMPL_ASSERT( itemIdx<size && "node item index out of range" );
-            TRIE_IMPL_ASSERT( (itemIdx+first_item)<pt->trie_node_data_items.size() && "node data index (size) out of range" );
+            MARTY_ADT_TRIE_IMPL_ASSERT( itemIdx<size && "node item index out of range" );
+            MARTY_ADT_TRIE_IMPL_ASSERT( (itemIdx+first_item)<pt->trie_node_data_items.size() && "node data index (size) out of range" );
             itemIdx += first_item;
             if (pt->trie_node_data_items[itemIdx].value_idx!=value_index_npos)
                pt->remove_value_impl( pt->trie_node_data_items[itemIdx].value_idx );
             pt->trie_node_data_items[itemIdx].value_idx = value_index_npos;
             #else
-            TRIE_IMPL_ASSERT( itemIdx<data_items.size() && "node item index out of range" );
+            MARTY_ADT_TRIE_IMPL_ASSERT( itemIdx<data_items.size() && "node item index out of range" );
             if (data_items[itemIdx].value_idx!=value_index_npos)
                pt->remove_value_impl( data_items[itemIdx].value_idx );
             data_items[itemIdx].value_idx = value_index_npos;
@@ -547,8 +518,8 @@ public:
         mapped_type &set_item_value( trie_type *pt, trie_node_data_item_index itemIdx, const mapped_type &val )
            {
             #if defined(USE_MARTY_ADT_TRIE_SINGLE_DATA_ARRAY)
-            TRIE_IMPL_ASSERT( itemIdx<size && "node item index out of range" );
-            TRIE_IMPL_ASSERT( (itemIdx+first_item)<pt->trie_node_data_items.size() && "node data index (size) out of range" );
+            MARTY_ADT_TRIE_IMPL_ASSERT( itemIdx<size && "node item index out of range" );
+            MARTY_ADT_TRIE_IMPL_ASSERT( (itemIdx+first_item)<pt->trie_node_data_items.size() && "node data index (size) out of range" );
             itemIdx += first_item;
 
             if (pt->trie_node_data_items[itemIdx].value_idx==value_index_npos)
@@ -557,7 +528,7 @@ public:
                pt->values[pt->trie_node_data_items[itemIdx].value_idx] = val;
             return pt->values[pt->trie_node_data_items[itemIdx].value_idx];
             #else
-            TRIE_IMPL_ASSERT( itemIdx<data_items.size() && "node item index out of range" );
+            MARTY_ADT_TRIE_IMPL_ASSERT( itemIdx<data_items.size() && "node item index out of range" );
             if (data_items[itemIdx].value_idx==value_index_npos)
                data_items[itemIdx].value_idx = pt->add_value_impl( val );
             else
@@ -590,7 +561,7 @@ public:
            {
             #if defined(USE_MARTY_ADT_TRIE_SINGLE_DATA_ARRAY)
             #else
-            TRIE_IMPL_ASSERT( itemIdx<data_items.size() && "node item index out of range" );
+            MARTY_ADT_TRIE_IMPL_ASSERT( itemIdx<data_items.size() && "node item index out of range" );
             erase_key(pt,data_items.begin()+itemIdx);
             #endif
            }
@@ -603,8 +574,8 @@ public:
         bool is_key_payloaded( const trie_type *pt, trie_node_data_item_index itemIdx ) const
            {
             #if defined(USE_MARTY_ADT_TRIE_SINGLE_DATA_ARRAY)
-            TRIE_IMPL_ASSERT( itemIdx<size && "node item index out of range" );
-            TRIE_IMPL_ASSERT( (itemIdx+first_item)<pt->trie_node_data_items.size() && "node data index (size) out of range" );
+            MARTY_ADT_TRIE_IMPL_ASSERT( itemIdx<size && "node item index out of range" );
+            MARTY_ADT_TRIE_IMPL_ASSERT( (itemIdx+first_item)<pt->trie_node_data_items.size() && "node data index (size) out of range" );
             itemIdx += first_item;
             return pt->trie_node_data_items[itemIdx].value_idx!=value_index_npos;
             #else
@@ -623,8 +594,8 @@ public:
         trie_node_index get_child_id( const trie_type *pt, trie_node_data_item_index itemIdx ) const
            {
             #if defined(USE_MARTY_ADT_TRIE_SINGLE_DATA_ARRAY)
-            TRIE_IMPL_ASSERT( itemIdx<size && "node item index out of range" );
-            TRIE_IMPL_ASSERT( (itemIdx+first_item)<pt->trie_node_data_items.size() && "node data index (size) out of range" );
+            MARTY_ADT_TRIE_IMPL_ASSERT( itemIdx<size && "node item index out of range" );
+            MARTY_ADT_TRIE_IMPL_ASSERT( (itemIdx+first_item)<pt->trie_node_data_items.size() && "node data index (size) out of range" );
             itemIdx += first_item;
             return pt->trie_node_data_items[itemIdx].child_idx;
             #else
@@ -649,8 +620,8 @@ public:
             return false;
            }
 
+    }; // struct trie_node
 
-    };
 
 
 #ifndef TRIE_IMPL_DEBUG
@@ -668,6 +639,39 @@ protected:
     size_type                     reserve_trie_node_data_items;
 
 
+    // Public utility functions
+
+    value_index add_value_impl( const mapped_type &v)
+    {
+        if (value_free_indexes.empty())
+           {
+            value_index res = values.size();
+            values.push_back(v);
+            return res;
+           }
+        value_index res = value_free_indexes.back();
+        MARTY_ADT_TRIE_IMPL_ASSERT( res<values.size() && "value index out of range" );
+        value_free_indexes.pop_back();
+        values[res] = v;
+        return res;
+    }
+
+    void remove_value_impl( value_index i)
+    {
+        MARTY_ADT_TRIE_IMPL_ASSERT( i<values.size() && "value index out of range" );
+        if (i==(values.size()-1))
+           { // last value
+            values.erase( values.begin()+i );
+           }
+        else
+           {
+            values[i] = mapped_type(); // set to default value
+            value_free_indexes.push_back(i);
+           }
+    }
+
+    // End of Public utility functions
+
     trie_node_index add_trie_node_impl( const trie_node &n)
     {
         if (trie_node_free_indexes.empty())
@@ -678,7 +682,7 @@ protected:
             return res;
            }
         trie_node_index res = trie_node_free_indexes.back();
-        TRIE_IMPL_ASSERT( res<trie_nodes.size() && "node index out of range" );
+        MARTY_ADT_TRIE_IMPL_ASSERT( res<trie_nodes.size() && "node index out of range" );
         trie_node_free_indexes.pop_back();
         trie_nodes[res] = n;
         trie_nodes[res].reserve(reserve_trie_node_data_items);
@@ -688,8 +692,8 @@ protected:
     // simple remove node, node data and values keep untouched
     void remove_node_impl( trie_node_index n )
     {
-        TRIE_IMPL_ASSERT( n<trie_nodes.size() && "node index out of range" );
-        TRIE_IMPL_ASSERT( trie_nodes[n].keys_size()!=0 && "node allready removed" );
+        MARTY_ADT_TRIE_IMPL_ASSERT( n<trie_nodes.size() && "node index out of range" );
+        MARTY_ADT_TRIE_IMPL_ASSERT( trie_nodes[n].keys_size()!=0 && "node allready removed" );
         if (n==(trie_nodes.size()-1))
            {
             trie_nodes.erase(trie_nodes.begin()+n);
@@ -703,15 +707,15 @@ protected:
 
     void remove_node_value( trie_node_index n, trie_node_data_item_index itemIdx )
     {
-        TRIE_IMPL_ASSERT( n<trie_nodes.size() && "node index out of range" );
-        TRIE_IMPL_ASSERT( trie_nodes[n].size!=0 && "node allready removed" );
+        MARTY_ADT_TRIE_IMPL_ASSERT( n<trie_nodes.size() && "node index out of range" );
+        MARTY_ADT_TRIE_IMPL_ASSERT( trie_nodes[n].size!=0 && "node allready removed" );
         trie_nodes[n].remove_item_value( this, itemIdx );
     }
 
     mapped_type &set_node_value( trie_node_index n, trie_node_data_item_index itemIdx, const mapped_type &val )
     {
-        TRIE_IMPL_ASSERT( n<trie_nodes.size() && "node index out of range" );
-        TRIE_IMPL_ASSERT( trie_nodes[n].keys_size()!=0 && "node allready removed" );
+        MARTY_ADT_TRIE_IMPL_ASSERT( n<trie_nodes.size() && "node index out of range" );
+        MARTY_ADT_TRIE_IMPL_ASSERT( trie_nodes[n].keys_size()!=0 && "node allready removed" );
         return trie_nodes[n].set_item_value( this, itemIdx, val );
     }
 
@@ -732,7 +736,7 @@ protected:
             if (tnIt->first_item >= dataItemIdx) tnIt->first_item--;
            }
         #else
-        TRIE_IMPL_ASSERT( nodeFromIdx<trie_nodes.size() && "node index out of range" );
+        MARTY_ADT_TRIE_IMPL_ASSERT( nodeFromIdx<trie_nodes.size() && "node index out of range" );
         //trie_nodes[nodeFromIdx].remove_item_value( pt, dataItemIdx );
         trie_nodes[nodeFromIdx].erase_key_by_index( pt, dataItemIdx );
         #endif
@@ -740,19 +744,19 @@ protected:
 
     bool is_node_item_or_childs_payloaded( trie_node_index n, trie_node_data_item_index itemIdx ) const
     {
-        TRIE_IMPL_ASSERT( n<trie_nodes.size() && "node index out of range" );
+        MARTY_ADT_TRIE_IMPL_ASSERT( n<trie_nodes.size() && "node index out of range" );
 
         if (trie_nodes[n].is_key_payloaded( this, itemIdx )) return true;
         if (!trie_nodes[n].key_has_child( this, itemIdx ))   return false;
 
         trie_node_index childId = trie_nodes[n].get_child_id(this, itemIdx);
-        TRIE_IMPL_ASSERT( childId<trie_nodes.size() && "node index out of range" );
+        MARTY_ADT_TRIE_IMPL_ASSERT( childId<trie_nodes.size() && "node index out of range" );
         return trie_nodes[childId].is_keys_payloaded( this );
 
         #if 0
-        TRIE_IMPL_ASSERT( n<trie_nodes.size() && "node index out of range" );
-        TRIE_IMPL_ASSERT( trie_nodes[n].size!=0 && "node allready removed" );
-        TRIE_IMPL_ASSERT( itemIdx<trie_nodes[n].size && "node item index out of range" );
+        MARTY_ADT_TRIE_IMPL_ASSERT( n<trie_nodes.size() && "node index out of range" );
+        MARTY_ADT_TRIE_IMPL_ASSERT( trie_nodes[n].size!=0 && "node allready removed" );
+        MARTY_ADT_TRIE_IMPL_ASSERT( itemIdx<trie_nodes[n].size && "node item index out of range" );
 
         trie_node_data_item_index dataItemIdx = trie_nodes[n].first_item + itemIdx;
         if (trie_node_data_items[dataItemIdx].value_idx!=value_index_npos)
@@ -773,9 +777,9 @@ protected:
     void remove_node_item( trie_node_index n, trie_node_data_item_index itemIdx )
     {
         #if defined(USE_MARTY_ADT_TRIE_SINGLE_DATA_ARRAY)
-        TRIE_IMPL_ASSERT( n<trie_nodes.size() && "node index out of range" );
-        TRIE_IMPL_ASSERT( trie_nodes[n].size!=0 && "node allready removed" );
-        TRIE_IMPL_ASSERT( itemIdx<trie_nodes[n].size && "node item index out of range" );
+        MARTY_ADT_TRIE_IMPL_ASSERT( n<trie_nodes.size() && "node index out of range" );
+        MARTY_ADT_TRIE_IMPL_ASSERT( trie_nodes[n].size!=0 && "node allready removed" );
+        MARTY_ADT_TRIE_IMPL_ASSERT( itemIdx<trie_nodes[n].size && "node item index out of range" );
 
         trie_node_data_item_index dataItemIdx = trie_nodes[n].first_item + itemIdx;
         trie_node_index childIdx = trie_node_data_items[dataItemIdx].child_idx;
@@ -793,11 +797,11 @@ protected:
 
         remove_data_item( trie_nodes[n].first_item + itemIdx, n );
         #else
-        TRIE_IMPL_ASSERT( n<trie_nodes.size() && "node index out of range" );
+        MARTY_ADT_TRIE_IMPL_ASSERT( n<trie_nodes.size() && "node index out of range" );
         if (trie_nodes[n].key_has_child( this, itemIdx ))
            {
             trie_node_index childId = trie_nodes[n].get_child_id(this, itemIdx);
-            TRIE_IMPL_ASSERT( childId<trie_nodes.size() && "node index out of range" );
+            MARTY_ADT_TRIE_IMPL_ASSERT( childId<trie_nodes.size() && "node index out of range" );
             while( trie_nodes[childId].keys_size() )
                {
                 remove_node_item( childId, 0 );
@@ -896,17 +900,18 @@ public:
     bool next( const_iterator &it, const key_type &k ) const;
     bool next( iterator &it, const key_type &k ) const;
 
-    template<typename KeyIter>
-    const_iterator find( const KeyIter &b, const KeyIter &e ) const;
 
-    template<typename KeyIter>
-    const_iterator find( const_iterator findFrom, const KeyIter &b, const KeyIter &e ) const;
+    template<typename KeyIter>  const_iterator find(                          const KeyIter &b, const KeyIter &e ) const;
+    template<typename KeyIter>  const_iterator find( const_iterator findFrom, const KeyIter &b, const KeyIter &e ) const;
+    template<typename KeyIter>  iterator       find(                          const KeyIter &b, const KeyIter &e );
+    template<typename KeyIter>  iterator       find(       iterator findFrom, const KeyIter &b, const KeyIter &e );
 
-    template<typename KeyIter>
-    iterator find( const KeyIter &b, const KeyIter &e );
 
-    template<typename KeyIter>
-    iterator find( iterator findFrom, const KeyIter &b, const KeyIter &e );
+    const_iterator find(                          key_type k ) const;
+    const_iterator find( const_iterator findFrom, key_type k ) const;
+    iterator       find(                          key_type k );
+    iterator       find(       iterator findFrom, key_type k );
+
 
     iterator insert( iterator where, const key_type &k );
     iterator insert( iterator where, const key_type &k, const mapped_type &v);
@@ -932,8 +937,10 @@ public:
     bool is_payloaded( const const_iterator &i ) const;
     bool is_payloaded( const iterator &i );
 
-    mapped_type& payload( iterator i, const mapped_type &v );
-    void remove_payload( iterator i );
+    mapped_type& payload( iterator i, const mapped_type &v ); //!< Добавляем нагрузку
+    mapped_type& payload( iterator i ); //!< Получаем ссылку на нагрузку
+    const mapped_type& payload( const_iterator i ) const; //!< Получаем const ссылку на нагрузку
+    void remove_payload( iterator i ); //!< Удаляем нагрузку
 
     size_type all_values_size() const { return values.size(); }
     mapped_type& value_at( size_type i) { return values[i]; }
@@ -984,8 +991,8 @@ protected:
 
     trie_node_data_item_index find_or_insert_key( const key_type &k, trie_node_index nodeIdx )
     {
-        TRIE_IMPL_ASSERT( nodeIdx!=trie_node_index_npos && "invalid node index" );
-        TRIE_IMPL_ASSERT( nodeIdx<trie_nodes.size() && trie_nodes[nodeIdx].keys_size()!=0 && "node index out of range" );
+        MARTY_ADT_TRIE_IMPL_ASSERT( nodeIdx!=trie_node_index_npos && "invalid node index" );
+        MARTY_ADT_TRIE_IMPL_ASSERT( nodeIdx<trie_nodes.size() && trie_nodes[nodeIdx].keys_size()!=0 && "node index out of range" );
         trie_node &node = trie_nodes[nodeIdx];
 
         bool bFound = false;
@@ -1046,6 +1053,40 @@ protected:
            }
         return where;
     }
+
+
+    template<typename TrieIterator>
+    TrieIterator find_impl( key_type keyVal, TrieIterator where ) const
+    {
+        if (trie_nodes.empty() || !trie_nodes[0].keys_size())
+           return non_const_iter_end();
+
+        if (where.is_end_iter()) // find starts on trie root
+           {
+            bool bFound = false;
+            trie_node_data_item_holder::const_iterator foundIt = trie_nodes[0].find_key( this, keyVal, bFound );
+            if (!bFound)
+               return non_const_iter_end();
+
+            where.push_pos( 0 , trie_nodes[0].nodeDataIteratorToLocalIndex(this,foundIt) );
+           }
+        else
+           {
+            trie_node_index nextNodeIdx = where.get_node_data_item().child_idx;
+            if (nextNodeIdx==trie_node_index_npos) // last pos points to the item without child
+               return non_const_iter_end();
+            bool bFound = false;
+            trie_node_data_item_holder::const_iterator foundIt = trie_nodes[nextNodeIdx].find_key( this, keyVal, bFound );
+            if (!bFound)
+               return non_const_iter_end();
+
+            trie_node_data_item_index nextItemIdx = trie_nodes[nextNodeIdx].nodeDataIteratorToLocalIndex(this,foundIt);
+            where.push_pos( nextNodeIdx , nextItemIdx );
+           }
+
+        return where;
+    }
+
 
     void clear_impl()
     {
@@ -1204,9 +1245,9 @@ protected:
 
     typename trie_type::trie_node_index get_node_index( const trie_position_type &pos ) const
     {
-        TRIE_IMPL_ASSERT( pTrie && "bad container pointer" );
-        TRIE_IMPL_ASSERT( pos.node_idx!=trie_type::trie_node_index_npos && "dereferencing end iterator" );
-        TRIE_IMPL_ASSERT( pos.node_idx<pTrie->trie_nodes.size() 
+        MARTY_ADT_TRIE_IMPL_ASSERT( pTrie && "bad container pointer" );
+        MARTY_ADT_TRIE_IMPL_ASSERT( pos.node_idx!=trie_type::trie_node_index_npos && "dereferencing end iterator" );
+        MARTY_ADT_TRIE_IMPL_ASSERT( pos.node_idx<pTrie->trie_nodes.size() 
                        && pTrie->trie_nodes[pos.node_idx].keys_size()!=0
                        && "node index out of range" );
         return pos.node_idx;
@@ -1214,7 +1255,7 @@ protected:
 
     typename trie_type::trie_node_index get_node_index() const
     {
-        TRIE_IMPL_ASSERT( !curPos.empty() && "dereferencing end iterator" );
+        MARTY_ADT_TRIE_IMPL_ASSERT( !curPos.empty() && "dereferencing end iterator" );
         return get_node_index(curPos.back());
     }
 
@@ -1225,7 +1266,7 @@ protected:
 
     typename trie_type::trie_node_data_item_index get_node_data_index( ) const
     {
-        TRIE_IMPL_ASSERT( !curPos.empty() && "dereferencing end iterator" );
+        MARTY_ADT_TRIE_IMPL_ASSERT( !curPos.empty() && "dereferencing end iterator" );
         return get_node_data_index(curPos.back());
     }
 
@@ -1233,9 +1274,9 @@ protected:
                                                                , typename trie_type::trie_node_data_item_index itemIdx
                                                                ) const
     {
-        TRIE_IMPL_ASSERT( pTrie && "bad container pointer" );
-        TRIE_IMPL_ASSERT( nodeIdx!=trie_type::trie_node_index_npos && "dereferencing end iterator" );
-        TRIE_IMPL_ASSERT( nodeIdx<pTrie->trie_nodes.size() 
+        MARTY_ADT_TRIE_IMPL_ASSERT( pTrie && "bad container pointer" );
+        MARTY_ADT_TRIE_IMPL_ASSERT( nodeIdx!=trie_type::trie_node_index_npos && "dereferencing end iterator" );
+        MARTY_ADT_TRIE_IMPL_ASSERT( nodeIdx<pTrie->trie_nodes.size() 
                        && pTrie->trie_nodes[nodeIdx].keys_size()!=0
                        && "node index out of range" );
         return pTrie->trie_nodes[nodeIdx].get_data_item( pTrie, itemIdx);
@@ -1248,7 +1289,7 @@ protected:
 
     typename trie_type::trie_node_data_item& get_node_data_item( ) const
     {
-        TRIE_IMPL_ASSERT( !curPos.empty() && "dereferencing end iterator" );
+        MARTY_ADT_TRIE_IMPL_ASSERT( !curPos.empty() && "dereferencing end iterator" );
         return get_node_data_item(curPos.back());
     }
 
@@ -1274,7 +1315,7 @@ protected:
 
     void pop_pos()
     {
-        TRIE_IMPL_ASSERT( !curPos.empty() && "try to pop position on end iterator" );
+        MARTY_ADT_TRIE_IMPL_ASSERT( !curPos.empty() && "try to pop position on end iterator" );
         curPos.pop_back();
         static_cast<T*>(this)->key_sequence_pop_back( );
     }
@@ -1288,7 +1329,7 @@ protected:
     {
         typename trie_type::trie_node_index nodeIdx = get_node_index();
         const typename trie_type::trie_node &node = pTrie->trie_nodes[nodeIdx];
-        TRIE_IMPL_ASSERT( node.first_item < pTrie->trie_node_data_items.size() 
+        MARTY_ADT_TRIE_IMPL_ASSERT( node.first_item < pTrie->trie_node_data_items.size() 
                        && "node data index out of range" );
 
         typename trie_node_data_item_holder::const_iterator itemsBegin = pTrie->trie_node_data_items.begin() + node.first_item;
@@ -1310,11 +1351,11 @@ protected:
         typename trie_type::trie_node_index nodeIdx = get_node_index();
 
         const typename trie_type::trie_node &node = pTrie->trie_nodes[nodeIdx];
-        //TRIE_IMPL_ASSERT( node.first_item < pTrie->trie_node_data_items.size() 
+        //MARTY_ADT_TRIE_IMPL_ASSERT( node.first_item < pTrie->trie_node_data_items.size() 
         //               && "node data index out of range" );
 
         // try to go deeper
-        //TRIE_IMPL_ASSERT( curPos.back().item_idx < node.keys_size() && "node data index out of range" );
+        //MARTY_ADT_TRIE_IMPL_ASSERT( curPos.back().item_idx < node.keys_size() && "node data index out of range" );
 
         const typename trie_type::trie_node_data_item &nodeDataItem = get_node_data_item(); //node.get_node_data_index(curPos.back().item_idx);
                      //= pTrie->trie_node_data_items[ node.first_item + curPos.back().item_idx ];
@@ -1339,7 +1380,7 @@ protected:
             static_cast<T*>(this)->key_sequence_pop_back( );
 
             nodeIdx = curPos.back().node_idx;
-            TRIE_IMPL_ASSERT( nodeIdx<pTrie->trie_nodes.size() 
+            MARTY_ADT_TRIE_IMPL_ASSERT( nodeIdx<pTrie->trie_nodes.size() 
                            && pTrie->trie_nodes[nodeIdx].keys_size()!=0 && "node index out of range" );
             nodeSize = pTrie->trie_nodes[nodeIdx].keys_size();//size;
            }
@@ -1359,15 +1400,15 @@ protected:
            }
 
         typename trie_type::trie_node_index nodeIdx = get_node_index();
-        //TRIE_IMPL_ASSERT( pTrie->trie_nodes[nodeIdx].first_item < pTrie->trie_node_data_items.size() 
+        //MARTY_ADT_TRIE_IMPL_ASSERT( pTrie->trie_nodes[nodeIdx].first_item < pTrie->trie_node_data_items.size() 
         //               && "node data index out of range" );
 
-        TRIE_IMPL_ASSERT( !is_begin_iter() && "begin can't be moved" );
+        MARTY_ADT_TRIE_IMPL_ASSERT( !is_begin_iter() && "begin can't be moved" );
         if ( is_begin_iter() ) return; // begin can't be moved
 
         if (curPos.back().item_idx==0) // pTrie->trie_nodes[nodeIdx].first_item
            { // go up
-            TRIE_IMPL_ASSERT( curPos.size()>1 && "position with level 0 can't be removed" );
+            MARTY_ADT_TRIE_IMPL_ASSERT( curPos.size()>1 && "position with level 0 can't be removed" );
             curPos.pop_back();
             static_cast<T*>(this)->key_sequence_pop_back( );
             return;
@@ -1383,7 +1424,7 @@ protected:
 
     bool is_equal( const trie_iterator_base_impl &iter ) const
     {
-        TRIE_IMPL_ASSERT( pTrie==iter.pTrie && "can't compare iterators from different containers" );
+        MARTY_ADT_TRIE_IMPL_ASSERT( pTrie==iter.pTrie && "can't compare iterators from different containers" );
         if (curPos.size()!=iter.curPos.size()) return false;
         std::vector< trie_position_type >::const_iterator it1 = curPos.begin(), it2 = iter.curPos.begin();
         for(; it1!=curPos.end(); ++it1, ++it2)
@@ -1395,7 +1436,7 @@ protected:
 
     bool is_equal( const ref_pair< const trie_type*, const std::vector< trie_position_type > > &data ) const
     {
-        TRIE_IMPL_ASSERT( pTrie==data.first && "can't compare iterators from different containers" );
+        MARTY_ADT_TRIE_IMPL_ASSERT( pTrie==data.first && "can't compare iterators from different containers" );
         if (curPos.size()!=data.second.size()) return false;
         std::vector< trie_position_type >::const_iterator it1 = curPos.begin(), it2 = data.second.begin();
         for(; it1!=curPos.end(); ++it1, ++it2)
@@ -1445,11 +1486,12 @@ public:
     }
 
     
-    bool is_payloaded()
+    bool is_payloaded() const
     {
         const trie_type::trie_node_data_item &item = get_node_data_item();
         return (item.value_idx!=trie_type::value_index_npos) ? true : false;
     }
+
 
     void swap( trie_iterator_base_impl &iter )
     {
@@ -1522,11 +1564,29 @@ protected:
     typedef trie_iterator_base_impl< TrieType
                                    , trie_const_iterator_impl<TrieType>
                                    > base_impl;
-
+    friend typename base_impl;
     
+    typedef TrieType trie_type;
+    friend  typename trie_type;
 
-    friend trie_type;
-    friend class base_impl;
+    typedef typename base_impl::key_type            key_type;
+    typedef typename base_impl::trie_position_type  trie_position_type;
+    typedef typename base_impl::mapped_type         mapped_type;
+
+    //  
+    // friend class trie_map;
+    //  
+    // typedef typename trie_type::mapped_type    mapped_type;
+    // typedef typename trie_type::key_compare key_compare;
+    // //typedef typename trie_type::value_compare value_compare;
+    // typedef typename trie_type::value_type value_type;
+    // typedef typename trie_type::difference_type difference_type;
+    //  
+    // typedef typename trie_type::key_type * pointer;
+    // typedef typename trie_type::key_type * const_pointer;
+    //  
+    // typedef std::bidirectional_iterator_tag    iterator_category;
+
 
     void key_sequence_push_back( const key_type &k ) { }
     void key_sequence_pop_back( ) {}
@@ -1611,6 +1671,27 @@ public:
         { return !is_equal(i); }
 */
 
+    //!!!payload
+    const mapped_type& payload() const
+    {
+        const trie_type::trie_node_data_item &item = get_node_data_item();
+        MARTY_ADT_TRIE_IMPL_ASSERT( (item.value_idx!=trie_type::value_index_npos) && "No payload" );
+        return pTrie->values[item.value_idx];
+    }
+    // typedef typename trie_type::key_type       key_type;
+    // typedef typename trie_type::mapped_type    mapped_type;
+
+    // bool is_payloaded() const
+    // {
+    //     const trie_type::trie_node_data_item &item = get_node_data_item();
+    //     return (item.value_idx!=trie_type::value_index_npos) ? true : false;
+    // }
+
+    // trie_type                         *pTrie;
+    // std::vector< trie_position_type >  curPos;
+
+
+
 }; // class trie_const_iterator_impl
 
 
@@ -1628,8 +1709,27 @@ protected:
     typedef trie_iterator_base_impl< TrieType
                                    , trie_iterator_impl<TrieType>
                                    > base_impl;
-    friend trie_type;
-    friend class base_impl;
+    friend typename base_impl;
+    
+    typedef TrieType trie_type;
+    friend  typename trie_type;
+
+    typedef typename base_impl::key_type            key_type;
+    typedef typename base_impl::trie_position_type  trie_position_type;
+    typedef typename base_impl::mapped_type         mapped_type;
+
+    //  
+    // friend class trie_map;
+    //  
+    // typedef typename trie_type::key_compare key_compare;
+    // //typedef typename trie_type::value_compare value_compare;
+    // typedef typename trie_type::value_type value_type;
+    // typedef typename trie_type::difference_type difference_type;
+    //  
+    // typedef typename trie_type::key_type * pointer;
+    // typedef typename trie_type::key_type * const_pointer;
+    //  
+    // typedef std::bidirectional_iterator_tag    iterator_category;
 
     void key_sequence_reserve( std::size_t s ) {}
     void key_sequence_push_back( const key_type &k ) { }
@@ -1686,6 +1786,15 @@ public:
     bool operator!=(const trie_iterator_impl &i) const
         { return !is_equal(i); }
 
+    //!!!payload
+    mapped_type& payload() const
+    {
+        const trie_type::trie_node_data_item &item = get_node_data_item();
+        MARTY_ADT_TRIE_IMPL_ASSERT( (item.value_idx!=trie_type::value_index_npos) && "No payload" );
+        return pTrie->values[item.value_idx];
+    }
+
+
 }; // class trie_iterator_impl
 
 
@@ -1716,9 +1825,43 @@ protected:
     typedef trie_iterator_base_impl< TrieType
                                    , trie_map_iterator_base_impl<TrieType, TrieKeyTypeContainer>
                                    > base_impl;
-    friend trie_type;
-    friend class base_impl;
-    friend class trie_map< TrieKeyTypeContainer, typename trie_type::mapped_type, typename trie_type::key_compare >;
+    typedef TrieType trie_type;
+    typedef trie_map< TrieKeyTypeContainer, typename trie_type::mapped_type, typename trie_type::key_compare >  trie_map;
+
+    typedef typename base_impl::key_type            key_type;
+    typedef typename base_impl::trie_position_type  trie_position_type;
+    typedef typename base_impl::mapped_type         mapped_type;
+
+
+    friend typename trie_type;
+    friend typename base_impl;
+    friend typename trie_map ;
+
+
+    //---
+    // typedef trie_iterator_base_impl< TrieType
+    //                                , trie_const_iterator_impl<TrieType>
+    //                                > base_impl;
+    // friend typename base_impl;
+    //  
+    // typedef TrieType trie_type;
+    // friend  typename trie_type;
+    //  
+
+    //  
+    // friend class trie_map;
+    //  
+    // typedef typename trie_type::key_compare key_compare;
+    // //typedef typename trie_type::value_compare value_compare;
+    // typedef typename trie_type::value_type value_type;
+    // typedef typename trie_type::difference_type difference_type;
+    //  
+    // typedef typename trie_type::key_type * pointer;
+    // typedef typename trie_type::key_type * const_pointer;
+    //  
+    // typedef std::bidirectional_iterator_tag    iterator_category;
+    //---
+
 
     string_type  str_key;
 
@@ -1734,7 +1877,7 @@ protected:
 
     void key_sequence_pop_back( )
     {
-         TRIE_IMPL_ASSERT( !str_key.empty() && "keySequence in inconsistent state" );
+         MARTY_ADT_TRIE_IMPL_ASSERT( !str_key.empty() && "keySequence in inconsistent state" );
          str_key.erase( str_key.begin() + str_key.size() - 1 );
     }
 
@@ -1966,8 +2109,8 @@ trie<KeyType,ValueType,Traits > :: construct_last( Iter &iter, typename trie<Key
 
     while(nodeIdx!=trie_node_index_npos)
        {
-        TRIE_IMPL_ASSERT( nodeIdx<trie_nodes.size() && "node index out of range" );
-        TRIE_IMPL_ASSERT( trie_nodes[nodeIdx].keys_size()!=0 && "invalid node: size==0" );
+        MARTY_ADT_TRIE_IMPL_ASSERT( nodeIdx<trie_nodes.size() && "node index out of range" );
+        MARTY_ADT_TRIE_IMPL_ASSERT( trie_nodes[nodeIdx].keys_size()!=0 && "invalid node: size==0" );
         iter.push_pos( nodeIdx, trie_nodes[nodeIdx].keys_size()-1 );
         nodeIdx = trie_nodes[nodeIdx].get_child_id( this, trie_nodes[nodeIdx].keys_size()-1 ); // .child_idx;
        }
@@ -2099,44 +2242,61 @@ insert( typename trie<KeyType,ValueType,Traits > :: iterator where
 }
 
 
-template < typename KeyType, typename ValueType, typename Traits >
-template<typename KeyIter>
-inline
+template < typename KeyType, typename ValueType, typename Traits >     template<typename KeyIter>   inline
 typename trie<KeyType,ValueType,Traits > :: const_iterator 
-trie<KeyType,ValueType,Traits > :: 
-find( const KeyIter &b, const KeyIter &e ) const
+trie<KeyType,ValueType,Traits > :: find( const KeyIter &b, const KeyIter &e ) const
 {
     return find_impl( b, e, typename trie<KeyType,ValueType,Traits > :: const_iterator( this, false ) );
 }
 
-template < typename KeyType, typename ValueType, typename Traits >
-template<typename KeyIter>
-inline
+template < typename KeyType, typename ValueType, typename Traits >     template<typename KeyIter>   inline
 typename trie<KeyType,ValueType,Traits > :: const_iterator 
-trie<KeyType,ValueType,Traits > :: 
-find( typename trie<KeyType,ValueType,Traits > :: const_iterator findFrom, const KeyIter &b, const KeyIter &e ) const
+trie<KeyType,ValueType,Traits > :: find( typename trie<KeyType,ValueType,Traits > :: const_iterator findFrom, const KeyIter &b, const KeyIter &e ) const
 {
     return find_impl( b, e, findFrom );
 }
 
-template < typename KeyType, typename ValueType, typename Traits >
-template<typename KeyIter>
-inline
+template < typename KeyType, typename ValueType, typename Traits >     template<typename KeyIter>   inline
 typename trie<KeyType,ValueType,Traits > :: iterator 
-trie<KeyType,ValueType,Traits > :: 
-find( const KeyIter &b, const KeyIter &e )
+trie<KeyType,ValueType,Traits > :: find( const KeyIter &b, const KeyIter &e )
 {
     return find_impl( b, e, typename trie<KeyType,ValueType,Traits > :: iterator( this, false ) );
 }
 
-template < typename KeyType, typename ValueType, typename Traits >
-template<typename KeyIter>
-inline
+template < typename KeyType, typename ValueType, typename Traits >     template<typename KeyIter>   inline
 typename trie<KeyType,ValueType,Traits > :: iterator 
-trie<KeyType,ValueType,Traits > :: 
-find( typename trie<KeyType,ValueType,Traits > :: iterator findFrom, const KeyIter &b, const KeyIter &e )
+trie<KeyType,ValueType,Traits > :: find( typename trie<KeyType,ValueType,Traits > :: iterator findFrom, const KeyIter &b, const KeyIter &e )
 {
     return find_impl( b, e, findFrom );
+}
+
+
+template < typename KeyType, typename ValueType, typename Traits >     inline
+typename trie<KeyType,ValueType,Traits > :: const_iterator 
+trie<KeyType,ValueType,Traits > :: find( typename trie<KeyType,ValueType,Traits > :: key_type k ) const
+{
+    return find_impl( k, typename trie<KeyType,ValueType,Traits > :: const_iterator( this, false ) );
+}
+
+template < typename KeyType, typename ValueType, typename Traits >     inline
+typename trie<KeyType,ValueType,Traits > :: const_iterator 
+trie<KeyType,ValueType,Traits > :: find( typename trie<KeyType,ValueType,Traits > :: const_iterator findFrom, typename trie<KeyType,ValueType,Traits > :: key_type k ) const
+{
+    return find_impl( k, findFrom );
+}
+
+template < typename KeyType, typename ValueType, typename Traits >     inline
+typename trie<KeyType,ValueType,Traits > :: iterator 
+trie<KeyType,ValueType,Traits > :: find( typename trie<KeyType,ValueType,Traits > :: key_type k )
+{
+    return find_impl( k, typename trie<KeyType,ValueType,Traits > :: iterator( this, false ) );
+}
+
+template < typename KeyType, typename ValueType, typename Traits >     inline
+typename trie<KeyType,ValueType,Traits > :: iterator 
+trie<KeyType,ValueType,Traits > :: find( typename trie<KeyType,ValueType,Traits > :: iterator findFrom, typename trie<KeyType,ValueType,Traits > :: key_type k )
+{
+    return find_impl( k, findFrom );
 }
 
 
@@ -2169,7 +2329,7 @@ template < typename KeyType, typename ValueType, typename Traits >
 inline
 typename trie<KeyType,ValueType,Traits > :: mapped_type& 
 trie<KeyType,ValueType,Traits > :: 
-payload( typename trie<KeyType,ValueType,Traits > :: iterator i
+payload( typename trie<KeyType,ValueType,Traits > :: iterator where
        , const typename trie<KeyType,ValueType,Traits > :: mapped_type &v )
 {
     trie_node_index             lastNodeIdx   = where.get_node_index();
@@ -2180,14 +2340,32 @@ payload( typename trie<KeyType,ValueType,Traits > :: iterator i
 template < typename KeyType, typename ValueType, typename Traits >
 inline void 
 trie<KeyType,ValueType,Traits > :: 
-remove_payload( typename trie<KeyType,ValueType,Traits > :: iterator i )
+remove_payload( typename trie<KeyType,ValueType,Traits > :: iterator where )
 {
     trie_node_index             lastNodeIdx   = where.get_node_index();
     trie_node_data_item_index   dataItemIdx   = where.get_node_data_index();
     remove_node_value( lastNodeIdx, dataItemIdx );
 }
 
+//! Получаем ссылку на нагрузку
+template < typename KeyType, typename ValueType, typename Traits >
+inline
+typename trie<KeyType,ValueType,Traits > :: mapped_type& 
+trie<KeyType,ValueType,Traits > :: 
+payload( typename trie<KeyType,ValueType,Traits > :: iterator where )
+{
+    return where.payload();
+}
 
+//!< Получаем const ссылку на нагрузку
+template < typename KeyType, typename ValueType, typename Traits >
+inline
+const typename trie<KeyType,ValueType,Traits > :: mapped_type& 
+trie<KeyType,ValueType,Traits > :: 
+payload( typename trie<KeyType,ValueType,Traits > :: const_iterator where ) const
+{
+    return where.payload();
+}
 
 
 
@@ -2282,7 +2460,7 @@ public:
 
     iterator erase( iterator where )
     {
-        TRIE_IMPL_ASSERT( where.is_payloaded() && "iterator has no payload" );
+        MARTY_ADT_TRIE_IMPL_ASSERT( where.is_payloaded() && "iterator has no payload" );
         iterator res = m_trie.erase_impl(where);
         if (!where.is_end_iter() && !where.is_payloaded())
            where.move_to_prev_payloaded_impl();
@@ -2324,7 +2502,7 @@ public:
     std::pair <iterator, bool> insert( const value_type& v )
     {
         bool newInserted = false;
-        TRIE_IMPL_ASSERT( v.first.begin()!=v.first.end() && "can't insert empty sequence" );
+        MARTY_ADT_TRIE_IMPL_ASSERT( v.first.begin()!=v.first.end() && "can't insert empty sequence" );
         iterator it = m_trie.insert_key_sequence_impl( v.first.begin(), v.first.end(), end(), v.second, &newInserted );
         return std::make_pair(it,newInserted);
     }
@@ -2356,7 +2534,7 @@ public:
         bool newInserted = false;
         //if (k=="material") 
         //   newInserted = true;
-        TRIE_IMPL_ASSERT( k.begin()!=k.end() && "can't insert empty sequence" );
+        MARTY_ADT_TRIE_IMPL_ASSERT( k.begin()!=k.end() && "can't insert empty sequence" );
         iterator it = m_trie.insert_key_sequence_impl_set_default_if_absent( k.begin(), k.end(), end(), &newInserted );
         return it.get_value_ref();
     }
