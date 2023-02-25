@@ -30,12 +30,13 @@
 #include <random>
 
 
-// Win32 version
 #ifndef MARTY_ADT_TRIE_IMPL_ASSERT
-    #define MARTY_ADT_TRIE_IMPL_ASSERT(expr)    _ASSERTE(expr)
+    #if defined(WIN32) || defined(_WIN32)
+        #define MARTY_ADT_TRIE_IMPL_ASSERT(expr)    _ASSERTE(expr)
+    #else
+        #include <<assert.h>>
+    #endif
 #endif
-
-// or simple include <assert.h> before including "marty_adt/trie.h"
 
 #include "marty_adt/trie.h"
 
