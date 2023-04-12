@@ -871,7 +871,11 @@ public:
     void clear() { clear_impl(); }
     bool empty() const
     {
-        return (trie_nodes.empty() || trie_nodes[0].size==0);
+        #if defined(USE_MARTY_ADT_TRIE_SINGLE_DATA_ARRAY)
+            return (trie_nodes.empty() || trie_nodes[0].size==0);
+        #else
+            return (trie_nodes.empty());
+        #endif
     }
 
     void swap( trie &t)
