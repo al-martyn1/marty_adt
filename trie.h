@@ -13,6 +13,14 @@
 #endif
 */
 
+#if defined(_MSC_VER)
+    #pragma warning(push)
+    #pragma warning(disable:4100) // warning C4100: 'pt': unreferenced formal parameter
+    #pragma warning(disable:4189) // warning C4189: 'lastNodeIdx': local variable is initialized but not referenced
+    #pragma warning(disable:4365) // warning C4365: 'argument': conversion from 'unsigned __int64' to 'const __int64', signed/unsigned mismatch
+#endif
+
+
 #ifndef MARTY_ADT_TRIE_IMPL_ASSERT
     #ifdef CLIASSERT
         #define MARTY_ADT_TRIE_IMPL_ASSERT(expr)    CLIASSERT(expr)
@@ -191,19 +199,16 @@ public:
 
     typedef std::vector< trie_node_data_item >             trie_node_data_item_holder;
     typedef typename trie_node_data_item_holder::size_type trie_node_data_item_index;
-    const static trie_node_data_item_index                 trie_node_data_item_index_npos
-                                           = static_cast<trie_node_data_item_index>(-1);
+    const static trie_node_data_item_index                 trie_node_data_item_index_npos = static_cast<trie_node_data_item_index>(-1);
     
     typedef std::vector< trie_node >                     trie_nodes_holder;
     typedef typename trie_nodes_holder::size_type        trie_node_index;
-    const static trie_node_index                         trie_node_index_npos 
-                                           = static_cast<trie_node_index>(-1);
+    const static trie_node_index                         trie_node_index_npos  = static_cast<trie_node_index>(-1);
 
     typedef std::vector< mapped_type >                   values_holder;
     
     typedef typename values_holder::size_type            value_index;
-    const static value_index                             value_index_npos
-                                           = static_cast<value_index>(-1);
+    const static value_index                             value_index_npos      = static_cast<value_index>(-1);
 
     //typedef std::stack< value_index    , std::vector<value_index> >     value_free_index_holder;
     //typedef std::stack< trie_node_index, std::vector<trie_node_index> > trie_node_free_index_holder;
@@ -825,11 +830,11 @@ public:
         : comparator()
         , values()
         , value_free_indexes()
+        , trie_node_free_indexes()
         #if defined(USE_MARTY_ADT_TRIE_SINGLE_DATA_ARRAY)
         , trie_node_data_items()
         #endif
         , trie_nodes()
-        , trie_node_free_indexes()
         , reserve_trie_node_data_items(1)
         {}
 
@@ -837,11 +842,11 @@ public:
         : comparator(t)
         , values()
         , value_free_indexes()
+        , trie_node_free_indexes()
         #if defined(USE_MARTY_ADT_TRIE_SINGLE_DATA_ARRAY)
         , trie_node_data_items()
         #endif
         , trie_nodes()
-        , trie_node_free_indexes()
         , reserve_trie_node_data_items(1)
         {}
 
@@ -849,11 +854,11 @@ public:
         : comparator(t.comparator)
         , values(t.values)
         , value_free_indexes(t.value_free_indexes)
+        , trie_node_free_indexes(t.trie_node_free_indexes)
         #if defined(USE_MARTY_ADT_TRIE_SINGLE_DATA_ARRAY)
         , trie_node_data_items(t.trie_node_data_items)
         #endif
         , trie_nodes(t.trie_nodes)
-        , trie_node_free_indexes(t.trie_node_free_indexes)
         , reserve_trie_node_data_items(t.reserve_trie_node_data_items)
         {}
 
@@ -1882,7 +1887,7 @@ protected:
     void key_sequence_pop_back( )
     {
          MARTY_ADT_TRIE_IMPL_ASSERT( !str_key.empty() && "keySequence in inconsistent state" );
-         str_key.erase( str_key.begin() + str_key.size() - 1 );
+         str_key.erase( str_key.begin() + str_key.size() - 1u );
     }
 
     trie_map_iterator_base_impl( trie_type *pt, bool bBegin, typename std::vector< trie_position_type >::size_type pos_size = MARTY_ADT_TRIE_ITERATOR_RESERVE_MAGIC_NUMBER )
@@ -2557,6 +2562,11 @@ public:
 
 }; // namespace adt
 }; // namespace marty
+
+
+#if defined(_MSC_VER)
+    #pragma warning(pop)
+#endif
 
 
 #endif /* MARTY_TRIE_H */
